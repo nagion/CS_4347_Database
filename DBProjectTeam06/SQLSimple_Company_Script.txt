@@ -1,0 +1,108 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema simple_company
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema simple_company
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `simple_company` DEFAULT CHARACTER SET utf8 ;
+USE `simple_company` ;
+
+-- -----------------------------------------------------
+-- Table `simple_company`.`Customer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `simple_company`.`Customer` (
+  `id` BIGINT(10) NOT NULL AUTO_INCREMENT,
+  `firstName` VARCHAR(45) NOT NULL,
+  `lastName` VARCHAR(45) NOT NULL,
+  `gender` CHAR(1) NOT NULL,
+  `dob` DATE NOT NULL,
+  `email` VARCHAR(99) NOT NULL,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `simple_company`.`Product`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `simple_company`.`Product` (
+  `id` BIGINT(10) NOT NULL AUTO_INCREMENT,
+  `prodName` VARCHAR(45) NOT NULL,
+  `prodDescription` VARCHAR(100) NOT NULL,
+  `prodCategory` INT NOT NULL,
+  `prodUPC` VARCHAR(45) NOT NULL,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `simple_company`.`Purchase`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `simple_company`.`Purchase` (
+  `id` BIGINT(10) NOT NULL AUTO_INCREMENT,
+  `productID` BIGINT(10) NOT NULL,
+  `customerID` BIGINT(10) NOT NULL,
+  `purchaseDate` DATE NOT NULL,
+  `purchaseAmount` DECIMAL NOT NULL,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `fk_Purchase_Product_idx` (`productID` ASC),
+  INDEX `fk_Purchase_Customer1_idx` (`customerID` ASC),
+  CONSTRAINT `fk_Purchase_Product`
+    FOREIGN KEY (`productID`)
+    REFERENCES `simple_company`.`Product` (`id`)
+    ON DELETE cascade
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Purchase_Customer1`
+    FOREIGN KEY (`customerID`)
+    REFERENCES `simple_company`.`Customer` (`id`)
+    ON DELETE cascade
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `simple_company`.`CreditCard`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `simple_company`.`CreditCard` (
+  `name` VARCHAR(90) NOT NULL,
+  `ccNumber` VARCHAR(20) NOT NULL,
+  `expDate` VARCHAR(45) NOT NULL,
+  `securityCode` VARCHAR(45) NOT NULL,
+  `customerID` BIGINT(10) NOT NULL,
+  INDEX `fk_CreditCard_Customer1_idx` (`customerID` ASC),
+  CONSTRAINT `fk_CreditCard_Customer1`
+    FOREIGN KEY (`customerID`)
+    REFERENCES `simple_company`.`Customer` (`id`)
+    ON DELETE cascade
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `simple_company`.`Address`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `simple_company`.`Address` (
+  `address1` VARCHAR(99) NOT NULL,
+  `address2` VARCHAR(99) NOT NULL,
+  `city` VARCHAR(45) NOT NULL,
+  `state` VARCHAR(25) NOT NULL,
+  `zipcode` VARCHAR(20) NOT NULL,
+  `customerID` BIGINT(10) NOT NULL,
+  INDEX `fk_Address_Customer1_idx` (`customerID` ASC),
+  CONSTRAINT `fk_Address_Customer1`
+    FOREIGN KEY (`customerID`)
+    REFERENCES `simple_company`.`Customer` (`id`)
+    ON DELETE Cascade
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
